@@ -8,6 +8,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.exceptions.CommandSyntaxException;
 import cn.nukkit.command.utils.CommandParser;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 
@@ -61,10 +62,14 @@ public class ParticleCommand extends VanillaCommand {
                 position.level.addParticleEffect(position.asVector3f(), name, -1, position.level.getDimension(), (Player[]) null);
             }
 
-            sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
+            if (defaultPosition.level.getGameRules().getBoolean(GameRule.SEND_COMMAND_FEEDBACK)) {
+                sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
+            }
             return true;
         } catch (CommandSyntaxException e) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", "\n" + this.getCommandFormatTips()));
+            if (defaultPosition.level.getGameRules().getBoolean(GameRule.SEND_COMMAND_FEEDBACK)) {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", "\n" + this.getCommandFormatTips()));
+            }
             return false;
         }
     }
